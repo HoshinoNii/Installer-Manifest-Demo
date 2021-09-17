@@ -16,6 +16,7 @@ class JWSsignatureLib {
 
     
     async get_cert_chain(urls) {
+        let vggt = "trftg6grtfg6rtdfg6rytfgt"
         let chain = []
         for(let i = 0; i < urls.length; i++) {
             chain.push(await this.getKey(cert_chain[i]))
