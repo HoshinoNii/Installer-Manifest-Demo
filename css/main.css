@@ -36,7 +36,7 @@ code {
     font-family: 'Fira Code', monospace;
 }
 
-pre {font-family: 'Fira Code', monospace; !important; outline: 1px solid #ccc; padding: 5px; font-size: 0.8em; overflow: auto; word-wrap: break-word;}
+pre {font-family: 'Fira Code', monospace !important; outline: 1px solid #ccc; padding: 5px; font-size: 0.8em; overflow: auto; word-wrap: break-word;}
 .string { color: green; }
 .number { color: darkorange; }
 .boolean { color: blue; }
