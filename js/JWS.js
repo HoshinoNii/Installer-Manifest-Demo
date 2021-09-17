@@ -138,10 +138,11 @@ class JWSsignatureLib {
 
         let alg = new SHAHash(this.logging)
         let json = payload
-        for( let resource of json.resources) { //generate a sha384 hash for Subresource Integrity
-            resource.integrity = await alg.startHash(resource.url)
+        if(json.resources) { //if the manifest is a resource manifest and not archive 
+            for( let resource of json.resources) { //generate a sha384 hash for Subresource Integrity
+                resource.integrity = await alg.startHash(resource.url)
+            }    
         }
-    
         let integrity = await alg.startHashWithText(this.serialize(payload))//hash the payload
         let date_ = new Date().toISOString().slice(0, 10)
         let payload_ = { integrity: integrity, date: date_ }
@@ -203,7 +204,7 @@ class JWSsignatureLib {
 const dir = 'certificates/'
 const jwsLib = new JWSsignatureLib("ES256", true)
 
-const cert_chain = [
+const cert_chain = [ 
     dir+"ca-chain/host.crt",
     dir+"ca-chain/ca.crt"
 ]
@@ -228,7 +229,7 @@ async function getKeys() {
 async function init() { 
 
     let credentials = await getKeys()
-    let res = await fetch('manifests/manifest-5.3.0.json') //fetch the manifest.json
+    let res = await fetch('manifests/manifest-archive.json') //fetch the manifest.json
     let sPayload = await res.json()
     console.log(sPayload, credentials)
     let manifest = await jwsLib.generateJWS_manifest(sPayload, credentials.privateKey, credentials.certifcate_chain, true)

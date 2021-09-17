@@ -60,7 +60,7 @@ async function generateManifest(manifest) {
         console.log('[FINAL RESULT]', result)
         return await result
     } catch (err) {
-        catchBrokenResource(err)
+        error_handler.catchBrokenResource(err)
         console.log('[FAIL]', err)
     }
 }
@@ -86,7 +86,7 @@ async function verifyManifest(json) {
             return false
         }
     } catch (err) {
-        let res = await createManifestResponse(err, json)
+        let res = await error_handler.createManifestResponse(err, json)
         throw res
     }
 }
@@ -120,4 +120,17 @@ async function installManifest(manifest_manager) {
     let url = manifest_manager.latest.url //get the latest url path
     await install(await fetchManifest(url)) // run the installer based on the url
 
+}
+//WIP simple function to manage installation issues for now
+async function repair(installerErrors) {
+    console.log("[Repair Operation:] Installer Errors", installerErrors)
+
+    installerErrors.forEach(({type, severity, message, url, init}) => {
+        console.log("[Repair Operation] Current Resource", type, severity, message, url, init)
+        if(type === 'Invalid Integrity' || type === "Missing Integrity") {
+            console.log("[Repair Operation] Unable to reapair ", url, " Please Contact the admin \nError Type:", type, "\n", message)
+        }
+    })
+    console.log("[Repair Operation]", await getLatestFallback().url)
+    await install(await fetchManifest(await getLatestFallback().url) )  // retrieve the latest fallback version of the manifest
 }

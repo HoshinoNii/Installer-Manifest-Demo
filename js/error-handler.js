@@ -81,6 +81,7 @@ class ErrorHandler {
     })
     if(this.installed !== this.expectedInstalls) {
       console.info("[error handler] Installation concluded with issues ("+this.installed+"/"+this.expectedInstalls+") Installed \nErrors ("+this.errors+"/"+this.expectedInstalls+"): ", this.installerErrors)
+      repair(this.installerErrors)
     } else {
       console.info("[error handler] Installation concluded witout issues ("+this.installed+"/"+this.expectedInstalls+") Installed")
     }

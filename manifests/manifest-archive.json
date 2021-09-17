@@ -13,7 +13,7 @@
         },
         {
             "version": "5.2.9",
-            "url": "manifest.json",
+            "url": "manifests/manifest-5.2.9.json",
             "dir": "/"
         }
     ]
