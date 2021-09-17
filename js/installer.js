@@ -109,8 +109,6 @@ async function install(manifest) {
                 })
             
         })
-
-        return error_handler.installerErrors
     } catch (err) {
         console.error("[Install()] Rejected", err)
     }
@@ -120,7 +118,6 @@ async function install(manifest) {
 async function installManifest(manifest_manager) {
 
     let url = manifest_manager.latest.url //get the latest url path
-    url = manifest_manager.archive[0].url //get the latest url path
     await install(await fetchManifest(url)) // run the installer based on the url
 
 }
