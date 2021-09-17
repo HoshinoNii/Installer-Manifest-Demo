@@ -120,9 +120,7 @@ async function install(manifest) {
 async function installManifest(manifest_manager) {
 
     let url = manifest_manager.latest.url //get the latest url path
-    await install(await fetchManifest(url))
-    if(error_handler.installerErrors) {
-        // Attempt to install the fallback manifest to check if all the installs can be met
-    }
+    url = manifest_manager.archive[0].url //get the latest url path
+    await install(await fetchManifest(url)) // run the installer based on the url
 
 }
