@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Service Worker Demo</title>
+    <link rel="icon" href="favicon-16x16.png" sizes="16x16" type="image/png">
+
+	<style type="text/css">
+		body {
+			margin: 0 auto;
+			max-width: 40em;
+			width: 88%;
+		}
+
+		img {
+			height: auto;
+			max-width: 100%;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>Jellyfish</h1>
+
+	<p>Jellyfish are pretty cool, too. Check out these beauties.</p>
+
+	<!--	<p><img alt="Three jellyfish in a rainbow of colors floating underwater" src="img/jellyfish.jpg"></p> -->
+
+
+	<script>
+        // Initialize the service worker
+        if (navigator && navigator.serviceWorker) {
+          navigator.serviceWorker.register("/simple_service_worker.js", {scope: "/jellyfish2/"});
+        }
+
+        console.log("Main Thread in Jellyfish");
+
+        // register onmessage for service worker
+        if (navigator && navigator.serviceWorker) {
+          navigator.serviceWorker.onmessage = async (event) => {
+            console.log("Main Thread onmessage ", event.data.type, " clientId ", event.data.clientId, " event ", event);
+
+            if (event.data.type === "serviceworker_onunregistered") {
+              window.close();
+            }
+          }
+        }
+
+        // register oncontrollerchange for service worker
+        if (navigator && navigator.serviceWorker) {
+          navigator.serviceWorker.oncontrollerchange = async (event) => {
+            console.log("Main Thread oncontrollerchange ", event);
+
+          }
+        }
+
+        // client redirect
+        window.location = "ver_1.0/jellyfish.html";
+	</script>
+
+</body>
+</html>

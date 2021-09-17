@@ -1,0 +1,89 @@
+// Manifest Notes layout
+/*
+
+    [SRI Text hashing algorithm]
+    json payload --> Canonize --> TextEncoder().encode() ---> hash with sha384 (sha384-....)
+
+    [Production Installer Process]
+    --> Retrieve manifest 
+    --> check jws.integrity 
+    --> verify signatures and certificate chain for developer & quality control 
+    --> if all checks out, approve else, reject.
+
+    {
+        version: "...",
+        path: "/",
+        index: "index-1.1.html", <--- Replace with URL?
+        resources: [
+            {
+                url: "mogumogu.mp4",
+                type: "video"
+                integrity: "sha384-..."
+            },
+            {
+                url: "mogumogu.mp3",
+                type: "audio"
+                integrity: "sha384-..."
+            },
+            {
+                url: "mogumogu.js",
+                type: "javascript"
+                integrity: "sha384-..."
+            }
+        ],
+        jws: {
+            integrity: "sha384-...",
+            develoepr: { 
+                date: "...",
+                signatute: "..."
+            },
+            quality: {
+                date: "...",
+                signature: "..."
+            }
+        }
+    }
+
+    jws format: header.payload.signature
+    jws header format
+    {
+        alg: "ES256",           <--- Algorithm
+        x5c: [                  <--- Certificate Chain
+            'end cert',         <--- End user certificate, using this public key to verify JWS
+            'ica cert 1',       <--- Intermediate Certs can be as many as u want
+            'ica cert 2',
+            'ica cert ...'
+        ]
+    }
+
+    payload structure for signature signing 
+    {
+        date: "...",
+        integrity: "..."
+    }
+
+    Installers Manifest Layout Example?
+    {
+        name: "Naga-Trinity-Manifest",                  <-- Something to describe the manifest
+        latest: {                                       <-- Latest Manifest ht: perhaps we can use a tool/script to constantly update this.. i.e. new manifest latest pushed into archive array
+            version: "1.5.1",                           <-- Version
+            manifest: "manifest-1.5.1.json",            <-- File Name
+            dir: "../../../manifest-1.5.1.json"         <-- Directory
+        },
+        archive: [
+            {
+                version: "1.3.4",
+                manifest: "manifest-1.3.4.json",
+                dir: "../../../manifest-1.3.4.json"
+            },
+            {
+                version: "1.2.3",
+                manifest: "manifest-1.2.3.json",
+                dir: "../../../manifest-1.2.3.json"
+            }
+        ]
+    }
+
+    Installer Perhaps Future Implementations?
+    --> CDN fetch based on closest server.. Maybe for big data team (302 Errors)
+*/

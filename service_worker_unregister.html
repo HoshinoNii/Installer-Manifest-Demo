@@ -1,0 +1,78 @@
+<html>
+<head>
+  <style>
+    body {
+      background-color: rgba(0, 0, 0, 0);
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Service Worker Unregister</h1>
+
+<script>
+  console.log("Main Thread in service_worker_unregister.html");
+
+  window.onerror = (event) => {
+    console.log("Main Thread in onerror ", event);
+  }
+
+  window.addEventListener('error', (event) => {
+    console.log(event, " src ", event.target.src);
+  }, true);
+
+  // register onmessage for service worker
+  if (navigator && navigator.serviceWorker) {
+    //reload if page does not register service worker
+    navigator.serviceWorker.onmessage = async (event) => {
+      console.log("Main Thread onmessage ", event.data.type, " clientId ", event.data.clientId, " event ", event);
+
+      if (event.data.type === "serviceworker_onunregistered") {
+        window.location.reload();
+      }
+    }
+
+    //unregister service worker
+    async function unregisterServiceWorker() {
+      const allRegistrations = await navigator.serviceWorker.getRegistrations();
+
+      let unregistered = false;
+      let activeWorkers = [];
+
+      for (let registration of allRegistrations) {
+        if (registration.active) {
+          console.log("Main Thread active ", registration.active);
+          activeWorkers.push(registration.active);
+        }
+
+        let result = await registration.unregister();
+
+        if (result) {
+          unregistered = true;
+        }
+      }
+
+      //notify service worker unregister
+      if (unregistered) {
+        //support multiple service workers
+        activeWorkers.forEach((thisWorker, index, array) => {
+          thisWorker.postMessage({type: "notify_unregsiter"});
+        });
+
+        return activeWorkers.length;
+      }
+
+      return -1;
+    }
+
+    //create unregisterServiceWorker API on window object
+    window.unregisterServiceWorker = unregisterServiceWorker;
+
+    //call unregisterServiceWorker here
+    window.unregisterServiceWorker();
+  }
+</script>
+
+</body>
+</html>

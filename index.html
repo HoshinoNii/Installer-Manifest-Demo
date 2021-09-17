@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Service Worker Demo</title>
+    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAmBJREFUOE+tU11Ik2EYPc++bW41N799c5umMrJGYD+ulQvZSi0wNTS7kH5uvUj6ufC6HyLwJrwIb6SbCEyIAq0UhDREKJNMJF2R2Q8V0zW/ueV0uu373tiXNyFIsN6b9+Y85z3nOe8hZHgow3n8PwLBmn+SCBfB4NhMFQM+E6FjIRh4msYpCizWvFYQtRuMJngOV2Gor2cDR6FVi7bzhWi59RWxuAQGXBaDgQ4y2GxWHbhv2UZTFi/koqq2Af2PuvErGsHaalwh0gkFsPJqXKqWce9uCHOrSYhyKp6IqwpIsOU3ENBbebweRcU78Wp4EEdPNGKovxcfpicVAufZG8o9030dnbwDE8ll3ImFIMlyLVns2+rAWN8fK3acab6Ajrarf1kgTgOTXY/K5u0YavcjFktCBqBirJr27D90Ljj3o0uWZWizdHDscGLG/3bDDrR6DruO2DH9LABZYlCpONjyC5rI5fHejK+sXBFDQTDGwAsWlFdVIxoJ48XgAEAE37EaGIw5ePl8AJGwCCKCkGuDfsvWa1Ra5n1ARE3JRALRiIiiYid2uw4qCvof3pdVHEc1p04raU29GcP3L59g4s3QaLTpJLqotMw3QQRXGpBKpbAohlDiOoDoYhgf3031EJHWWbK3LtuYA//ka5gFKzi1WnmAAWNU6vGKBDKvm36/uPCzdWlpqZLAglo1dUqSRBLjWhjBkm3gh3mL+XY6mHX8PLk8vnRW+8AwkuBSjf7R0fBmP9HtrrDInPQYhHKAjZPb7cuTOOaNheefzM7Orv1LuRwVFTrTcrI+Bc1IxmX6DXF31ONQVkQuAAAAAElFTkSuQmCC">
+
+	<style type="text/css">
+		body {
+			margin: 0 auto;
+			max-width: 40em;
+			width: 88%;
+		}
+
+		img {
+			height: auto;
+			max-width: 100%;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>Turtles</h1>
+
+	<p>Turtles are awesome! Here's a photo of one.</p>
+
+	<p><img alt="A photo of a sweet ass sea turtle swimming underwater" src="img/turtle.jpg"></p>
+
+
+	<script>
+        console.log("Main Thread in turtle");
+
+        window.onload = (event) => {
+          console.log('page is fully loaded');
+        }
+
+        function dispatchServiceWorkerWaitingEvent(registration) {
+          if (registration) {
+            if (registration.active && registration.waiting) {
+              if (navigator && navigator.serviceWorker) {
+                const waitingEvent = new CustomEvent("serviceworkerwaiting", {detail: {scope: registration.scope, waiting: registration.waiting}});
+                navigator.serviceWorker.dispatchEvent(waitingEvent);
+              }
+            }
+          }
+        }
+
+        async function listenForServiceWorkerStateChange(registration) {
+          if (registration.installing) {
+            registration.installing.onstatechange = async (event) => {
+              console.log("Main Thread listenForServiceWorkerStateChange onstatechange state ", event.target.state, " event ", event);
+
+              if (event.target.state === "installed") {
+                // A new service worker is available, inform the user
+                if (registration.active && registration.waiting) {
+                  dispatchServiceWorkerWaitingEvent(registration);
+                  return 1;
+                }
+              }
+
+              return -1;
+            }
+          }
+        }
+
+        async function updateFoundHandler(event) {
+          console.log("Main Thread updateFoundHandler onupdatefound ", event);
+
+          const registration = event.target;
+
+          if (registration) {
+            if (registration.installing != null) {
+              return await listenForServiceWorkerStateChange(registration);
+            } else {
+              if (registration.active && registration.waiting) {
+                console.log("Main Thread updateFoundHandler active and waiting");
+                dispatchServiceWorkerWaitingEvent(registration);
+                return 2;
+              }
+            }
+          }
+
+          return -1;
+        }
+
+        async function registerUpdateFoundHandler(scope = null) {
+          if (navigator && navigator.serviceWorker) {
+            const allRegistrations = await navigator.serviceWorker.getRegistrations();
+
+            // register if onupdatefound == null
+            if (scope == null) {
+              console.log("Main Thread registerUpdateFoundHandler scope == null Begin");
+
+              for (let registration of allRegistrations) {
+                if (registration.onupdatefound == null) {
+                  console.log("Main Thread registerUpdateFoundHandler scope ", registration.scope, " onupdatefound == null");
+                  registration.onupdatefound = updateFoundHandler;
+
+                  if (registration.installing) {
+                    console.log("Main Thread registerUpdateFoundHandler scope ", registration.scope, " installing");
+                    await listenForServiceWorkerStateChange(registration);
+                  }
+
+                  if (registration.active && registration.waiting) {
+                    console.log("Main Thread registerUpdateFoundHandler scope ", registration.scope, " active and waiting");
+                    dispatchServiceWorkerWaitingEvent(registration);
+                  }
+                } else {
+                  console.log("Main Thread registerUpdateFoundHandler scope ", scope, " already registered");
+                }
+              }
+
+              console.log("Main Thread registerUpdateFoundHandler scope == null End");
+
+              return 1;
+            }
+
+            // register if registration scope == scope
+            else {
+              const registration = allRegistrations.find((element) => { return element.scope === scope;});
+
+              if (registration) {
+                if (registration.onupdatefound == null) {
+                  console.log("Main Thread registerUpdateFoundHandler scope ", scope, " onupdatefound == null");
+
+                  registration.onupdatefound = updateFoundHandler;
+
+                  if (registration.installing) {
+                    console.log("Main Thread registerUpdateFoundHandler scope ", scope, " installing");
+                    await listenForServiceWorkerStateChange(registration);
+                  }
+
+                  if (registration.active && registration.waiting) {
+                    console.log("Main Thread registerUpdateFoundHandler scope ", scope, " active and waiting");
+                    dispatchServiceWorkerWaitingEvent(registration);
+                  }
+                } else {
+                  console.log("Main Thread registerUpdateFoundHandler scope ", scope, " already registered");
+                }
+
+                return 2;
+              }
+            }
+          }
+
+          return -1;
+        }
+
+        // register oncontrollerchange for service worker
+        if (navigator && navigator.serviceWorker) {
+          navigator.serviceWorker.oncontrollerchange = async (event) => {
+            console.log("Main Thread oncontrollerchange container ", event.target, " event ", event);
+
+          }
+        }
+
+        // register onmessage for service worker
+        if (navigator && navigator.serviceWorker) {
+          navigator.serviceWorker.onmessage = async (event) => {
+            console.log("Main Thread onmessage ", event.data.type, " clientId ", event.data.clientId, " event ", event);
+
+            if (event.data.type === "serviceworker_onunregistered") {
+              window.close();
+            }
+            else if (event.data.type === "serviceworker_oninstall") {
+              console.log("Main Thread serviceworker_oninstall ", event.data.scope);
+
+              if (event.data.scope === event.origin + "/") {
+                // install offline page here
+                // sometimes still abort skip_waiting, therefore move installation to onactivate
+                if (0)
+                {
+                  let cache = await caches.open('core');
+
+                  // bypass service worker if no accept header is provided
+                  // default accept header is */*, which will not be processed by demo simple_service_worker.js
+                  // sometimes, if skip_waiting start before onfetch, skip_waiting is aborted, therefore new service worker is still waiting
+                  // for play safe, move install offline page to serviceworker_onactivate
+                  await cache.add(new Request('offline.html', {method: 'GET', headers: {'Accept': 'text/html', "X-Custom-Header": 'bypass-cache'}}));
+                }
+              }
+
+              // register onupdatefound handler for registration with different scope
+              await registerUpdateFoundHandler(event.data.scope);
+
+              if (event.data.scope === event.origin + "/") {
+                console.log("Main Thread serviceworker_oninstall ", event.data.scope, " is my scope");
+
+                // install offline page here
+                if (0)
+                {
+                  let cache = await caches.open('core');
+
+                  // bypass service worker if no accept header is provided
+                  // default accept header is */*, which will not be processed by demo simple_service_worker.js
+                  // sometimes, if skip_waiting start before onfetch, skip_waiting is aborted, therefore new service worker is still waiting
+                  // for play safe, move install offline page to serviceworker_onactivate
+                  await cache.add(new Request('offline.html', {method: 'GET', headers: {'Accept': 'text/html', "X-Custom-Header": 'bypass-cache'}}));
+                }
+              }
+            }
+            else if (event.data.type === "serviceworker_onactivate") {
+              // clients claim if totalClients != controlledClients
+              {
+                if (event.data.totalClients != event.data.controlledClients) {
+                  // clients claim
+                  console.log("Main Thread serviceworker_onactivate ", event.data.scope, " clients claim");
+
+                  const allRegistrations = await navigator.serviceWorker.getRegistrations();
+                  const registration = allRegistrations.find((element) => { return element.scope === event.data.scope;});
+
+                  if (registration) {
+                    if (registration.active) {
+                      registration.active.postMessage({type: "clients_claim", scope: event.data.scope});
+                      console.log("Main Thread serviceworker_onactivate ", event.data.scope, " post clients_claim");
+                    }
+                  }
+                }
+              }
+
+              // can start installation if needed
+              if (event.data.scope === event.origin + "/") {
+                // install navigation_error page here
+                {
+                  let cache = await caches.open("RzAppEngine");
+
+                  await cache.add(new Request("navigation_error.html", {method: 'GET', cache: 'no-store', headers: {'Accept': 'text/html', "X-Custom-Header": 'bypass-cache'}}));
+                }
+              }
+
+            }
+          }
+        }
+
+        async function helloClient() {
+          const allRegistrations = await navigator.serviceWorker.getRegistrations();
+
+          if (allRegistrations.length > 0) {
+            const thisRegistration = allRegistrations.find((element) => { return element.acive !== null;});
+
+            if (thisRegistration) { 
+              if (thisRegistration.active) {
+                thisRegistration.active.postMessage({type: "hello_client"});
+              }
+            }
+          }
+        }
+
+        helloClient();
+
+        // register serviceworkerwaiting for service worker
+        if (navigator && navigator.serviceWorker) {
+          navigator.serviceWorker.addEventListener("serviceworkerwaiting", async (event) => {
+            console.log("Main Thread serviceworkerwaiting ", event);
+
+            if (event.detail.waiting) {
+              event.detail.waiting.postMessage({type: "skip_waiting", scope: event.detail.scope});
+            }
+          })
+        }
+
+        // Initialize the service worker
+		if (navigator && navigator.serviceWorker) {
+          navigator.serviceWorker.register('simple_service_worker.js').then(async (registration) => {
+            return await registerUpdateFoundHandler();
+          })
+        }
+
+        async function skipServiceWorkerWaiting(registration) {
+          if (registration) {
+            console.log("Main Thread skipServiceWorkerWaiting active ", registration.active, " waiting ", registration.waiting);
+
+            if (registration.active && registration.waiting) {
+              registration.waiting.postMessage({type: "skip_waiting"});
+              return 1;
+            }
+          }
+        }
+
+        async function listenForInstalledStateChange(registration, callback) {
+          if (registration.installing) {
+              registration.installing.onstatechange = async (event) => {
+              console.log("Main Thread onstatechange state ", event.target.state, " event ", event);
+
+              if (event.target.state === "installed") {
+                // A new service worker is available, inform the user
+                return await callback(registration);
+              };
+            }
+          }
+        }
+
+        async function listenForWaitingServiceWorker(registration, callback) {
+          if (!registration) {
+            return 0;
+          }
+
+          registration.onupdatefound = async (event) => {
+            console.log("Main Thread onupdatefound ", event);
+
+            return await listenForInstalledStateChange(event.target, callback);
+          };
+
+          if (registration.waiting) {
+            // A new service worker is available, inform the user
+            return await callback(registration);
+          }
+
+          if (registration.installing) {
+            return await listenForInstalledStateChange(registration, callback);
+          }
+        }
+	</script>
+
+</body>
+</html>

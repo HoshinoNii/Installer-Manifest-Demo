@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+    <script language="JavaScript" type="text/javascript" src="js/jsrsasign-latest-all-min.js"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <title>JWS Demo</title>
+</head>
+<body class="container">
+    <h1 class="モグモグ">jws.html</h1>
+    <p>This is just a handy tool for you to generate the manifest with a jws cannonalization process already done for you!</p>
+    <div class="output-container">
+        <p id="output"><span style="color:red;"></span></p>
+    </div><br>
+    <h4 class="モグモグ">Json Manifest Output</h4>
+    <button onClick="copyDivToClipboard()">Click to Copy</button> &nbsp;&nbsp;&nbsp;<span id="copied"></span>
+    <script src="js/json-beautifier.js"></script>
+    <script src="js/SHAHashingAlgorithm.js"></script>
+    <script src="js/JWS.js"></script>
+
+    <script>
+        function copyDivToClipboard() {
+            var range = document.createRange();
+            range.selectNode(document.getElementById("json_container"));
+            window.getSelection().removeAllRanges(); // clear current selection
+            window.getSelection().addRange(range); // to select text
+            console.log(range)
+            document.execCommand("copy");
+            window.getSelection().removeAllRanges();// to deselect
+
+            document.getElementById("copied").innerHTML="Copied to clipboard";
+        }
+        init()
+    </script>
+</body>
+</html>

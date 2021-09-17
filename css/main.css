@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+.モグモグ {
+    font-family: 'fira code';
+}
+
+p {
+    font-size: 1.15em;
+}
+
+code {
+    font-weight: 500;
+    color: rgb(255, 66, 66);
+    background-color: rgb(255, 236, 236);
+}
+
+#basicBg {
+    background-Color: white;
+    border: 1px solid black;
+    text-align: center;
+    padding: 0.5em 0.5em 0.5em;
+    margin-top: 0.5em;
+}
+
+.output-container {
+    overflow:auto;
+    height: 1vh;
+    padding: 15px;
+    border: 1px solid black;
+    word-wrap: break-word;
+    font-family: 'fira code';
+}
+
+pre {font-family: 'fira code' !important; outline: 1px solid #ccc; padding: 5px; font-size: 0.8em; overflow: auto; word-wrap: break-word;}
+.string { color: green; }
+.number { color: darkorange; }
+.boolean { color: blue; }
+.null { color: magenta; }
+.key { color: red; font-weight: 500;}

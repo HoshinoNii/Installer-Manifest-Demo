@@ -1,0 +1,57 @@
+<html>
+<head>
+  <style>
+    body {
+      background-color: rgba(0, 0, 0, 0);
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Transparent Ugly Face</h1>
+
+<img src="ugly.png">
+
+<script>
+  console.log("Main Thread in show_ugly.html");
+
+  window.onerror = (event) => {
+    console.log("Main Thread in onerror ", event);
+  }
+
+  window.addEventListener('error', (event) => {
+    console.log(event, " src ", event.target.src);
+  }, true);
+
+  window.addEventListener('error', (msg, url, lineNo, columnNo, error) => { 
+    //msg is event object, url is undefined
+    console.log("Main Thread in onerror msg ", msg, " url ", url);
+  }, true);
+
+  document.addEventListener('error', (event) => {
+    console.log("document error handlder ", event, " src ", event.target.src);
+  }, true);
+
+  // register onmessage for service worker
+  if (navigator && navigator.serviceWorker) {
+    navigator.serviceWorker.onmessage = async (event) => {
+      console.log("Main Thread onmessage ", event.data.type, " clientId ", event.data.clientId, " event ", event);
+
+      if (event.data.type === "serviceworker_onunregistered") {
+        window.location.reload();
+      }
+    }
+  }
+
+  // register oncontrollerchange for service worker
+  if (navigator && navigator.serviceWorker) {
+    navigator.serviceWorker.oncontrollerchange = async (event) => {
+      console.log("Main Thread oncontrollerchange ", event);
+
+    }
+  }
+</script>
+
+</body>
+</html>
