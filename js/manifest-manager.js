@@ -44,7 +44,6 @@ async function updateLatest(url) {
             throw "Signature Verification Failed!"
         }// Final Check ) 
         
-        
     } catch (error) {
         console.log(error)
     }

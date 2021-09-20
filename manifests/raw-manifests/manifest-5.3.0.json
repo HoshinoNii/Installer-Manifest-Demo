@@ -1,0 +1,20 @@
+
+{
+    "version": "5.3.0",
+    "path": "/",
+    "index": "index.html",
+    "resources": [
+        {
+            "url": "img/Anya_Melfissa_-_Profile_Picture.png",
+            "type": "image",
+        },
+        {
+            "url": "img/kanata.jpg",
+            "type": "image",
+        },
+        {
+            "url": "img/illust_84719630_20201020_033955.jpg",
+            "type": "image",
+        }
+    ],
+}

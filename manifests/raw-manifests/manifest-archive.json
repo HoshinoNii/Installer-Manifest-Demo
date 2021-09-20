@@ -1,0 +1,21 @@
+
+{
+    "name": "Example Manifest Archive for Device",
+    "latest": {
+        "version": "5.3.1",
+        "url": "manifests/manifest-5.3.1.json",
+        "dir": "/"
+    },
+    "archive": [
+        {
+            "version": "5.3.0",
+            "url": "manifests/manifest-5.3.0.json",
+            "dir": "/"
+        },
+        {
+            "version": "5.2.9",
+            "url": "manifests/manifest-5.2.9.json",
+            "dir": "/"
+        }
+    ],
+}
