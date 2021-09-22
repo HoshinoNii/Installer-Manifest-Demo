@@ -119,18 +119,81 @@ async function installManifest(manifest_manager) {
 
     let url = manifest_manager.latest.url //get the latest url path
     await install(await fetchManifest(url)) // run the installer based on the url
-
+    await TestInstall()
 }
+
+async function TestInstall() {
+    try {
+        let res = [
+            {
+                url: "https://jsonplaceholder.typicode.com/photos/1",  
+                init: {
+                    method: 'GET', 
+                    cache: "no-store", 
+                    mode: "cors", 
+                    headers: {'Accept': ACCEPT_HTML, "X-Custom-Header": 'bypass-cache'}
+                }
+            },{
+                url: "https://jsonplaceholder.typicode.com/photos/2",  
+                init: {
+                    method: 'GET', 
+                    cache: "no-store", 
+                    mode: "cors", 
+                    headers: {'Accept': ACCEPT_HTML, "X-Custom-Header": 'bypass-cache'}
+                    }
+            }
+        ]
+        res.forEach(async (value, index, array) => {            
+            console.log("installer value ", value, " index ", index, " array ", array);
+            await fetchResoureTest(value.url, value.init).then( (response) => {
+                    console.log("installer response [PASS] :", response);
+                    error_handler.updateInstalled(true)
+                }, (error) => {
+                    console.error("installer response [FAIL]:", error);
+                    error_handler.updateInstalled(false)
+                })
+            
+        })
+    } catch (err) {
+        console.error("[Install()] Rejected", err)
+    }
+}
+
+async function fetchResoureTest(url, init) {
+    try {
+      var thisRequest = new Request(url,init);
+      thisRequest.url = decodeURI(url);
+      const networkResponse = await fetch(thisRequest).catch(err=> {throw err})
+      if (networkResponse.ok) {
+        var cacheName = getCacheNameFromURL(thisRequest.url)
+        let cache = await caches.open(cacheName);
+        await cache.put(thisRequest, networkResponse.clone());
+        return networkResponse;
+      } else {
+        let err = {
+          message: 'response status ' + networkResponse.status + " error " + networkResponse.statusText, 
+          status: networkResponse
+        }
+        console.log('err network', err)
+        throw err
+      }
+    } catch (error) {
+      let err = await error_handler.createResponse(error.message, url, init, error.status)
+      error_handler.catchBrokenResource(err)
+      throw err;
+    }
+}
+
 //WIP simple function to manage installation issues for now
 async function repair(installerErrors) {
     console.log("[Repair Operation:] Installer Errors", installerErrors)
 
-    installerErrors.forEach(({type, severity, message, url, init}) => {
-        console.log("[Repair Operation] Current Resource", type, severity, message, url, init)
-        if(type === 'Invalid Integrity' || type === "Missing Integrity") {
-            console.log("[Repair Operation] Unable to reapair ", url, " Please Contact the admin \nError Type:", type, "\n", message)
-        }
-    })
-    console.log("[Repair Operation]", await getLatestFallback().url)
-    await install(await fetchManifest(await getLatestFallback().url) )  // retrieve the latest fallback version of the manifest
+    //installerErrors.forEach(({type, severity, message, url, init}) => {
+    //    console.log("[Repair Operation] Current Resource", type, severity, message, url, init)
+    //    if(type === 'Invalid Integrity' || type === "Missing Integrity") {
+    //        console.log("[Repair Operation] Unable to reapair ", url, " Please Contact the admin \nError Type:", type, "\n", message)
+    //    }
+    //})
+    //console.log("[Repair Operation]", await getLatestFallback().url)
+    //await install(await fetchManifest(await getLatestFallback().url))  // retrieve the latest fallback version of the manifest
 }
