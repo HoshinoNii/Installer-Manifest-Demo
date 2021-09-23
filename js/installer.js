@@ -261,15 +261,16 @@ async function TestInstall() {
                 }
             }
         }, {
-            url: "https://localhost:5500",
+            url: "http://localhost:18000/img/lamy",
             init: {
                 method: 'GET',
                 cache: "no-store",
                 mode: "cors",
                 headers: {
-                    'Accept': ACCEPT_HTML,
+                    'Accept': ACCEPT_IMAGE,
                     "X-Custom-Header": 'bypass-cache'
-                }
+                },
+                integrity: "sha384-Fiy1ySvRHjyzneb9efP+vsiwo4HPJFL6DZR6CFZr5DXTS2nNKx6Dn6vDlPhMo5y5"
             }
         }]
         res.forEach(async (value, index, array) => {
@@ -299,9 +300,6 @@ async function fetchResoureTest(url, init) {
             let cache = await caches.open(cacheName);
             await cache.put(thisRequest, networkResponse.clone());
             return networkResponse;
-        } else if (networkResponse.redirected) {
-            console.log("Redirected Resource", networkResponse.url)
-            fetchResourceTest(networkResponse.url, init) //request for the file again but with the new url
         } else {
             let err = {
                 type: error_handler.ErrorType.FAILED_TO_FETCH,
