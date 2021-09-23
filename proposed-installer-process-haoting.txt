@@ -97,3 +97,19 @@ This is my proposed new process for the installer to handle these manifests
 6. Once everything checkes out, do the installation.
 7. Once the installation has concluded gather up all the failed installs
 8. Perhaps do a repair operation in the background to try and fetch them once more? or refer to fallback's resources
+
+
+How to Generate a Signed Manifest for use in the installer.
+1. Open jws.html and JWS.js
+2. Modify the Init() Function in JWS.js and change the fetch url to the raw manifest.json file you want to sign
+    2.1. NOTE: the raw manifest data MUST not include a jws object within or it may produce Issues
+         When using the installer.
+3. Refresh jws.html and the updated Manifest will be outputted 
+4. Note: this process is the same for the Manifest-Archive or Manifest-Resource.
+
+Putting the new manifest into the archive
+1. Open manifest-manager.html and manifest-manager.js
+2. Change the values of the constants manifestManagerPath and manifestPath to the path of the Manifest-Archive and Manifest-Resource
+3. Load manifest-manager.html, open the console (F12) and execute updateLatest(manifestPath) to set the new manifest as the latest
+4. Afterwards Generate a Signed Manifest Again using the steps above for it to be used in the installer.
+

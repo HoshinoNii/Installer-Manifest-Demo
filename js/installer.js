@@ -131,11 +131,7 @@ async function generateManifest(manifest) {
         if (!await verifyManifest(manifest)) throw "invalid manifest"
         let result = []
         let dataArr = manifest.resources
-        for ({
-                url,
-                type,
-                integrity
-            } of dataArr) {
+        for ({ url, type, integrity } of dataArr) {
             let res = {}
             let init = {}
             let headers = {}
