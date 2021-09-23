@@ -317,7 +317,6 @@ async function fetchResoureTest(url, init) {
             type: error_handler.ErrorType.FAILED_TO_FETCH,
             severity: error_handler.ErrorSeverity.High,
             message: error.message,
-            status: "failed",
         }
         let err = await error_handler.createResponse2(errorRes, url, init)
         error_handler.catchBrokenResource(err)

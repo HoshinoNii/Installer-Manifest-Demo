@@ -1,38 +1,44 @@
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <link rel="stylesheet" href="css/main.css">
-    <script src="https://www.googleoptimize.com/optimize.js?id=OPT-PF9T3F3"></script>
-    <script language="JavaScript" type="text/javascript" src="js/jsrsasign-latest-all-min.js"></script>
-  </head>
-  <body>
-    <h1 class="モグモグ">Installer.html</h1>
-    <hr />
-    <p>Assign the var <code class="モグモグ">generatedManifest</code> by calling the <code class="モグモグ">generate_jws_manifest()</code> function</p>
-    <code class="モグモグ">generatedManifest = generateJWS_manifest();</code>
-    <p>Call the function <code class="モグモグ">installManifest(await generatedManifest)</code> in the console to install</p><br><br>
-    <h1 class="モグモグ">Installer Failled Output</h1>
-    <hr />
-    <p>Any resource that has failed to fetch will be outputted here.. use <code class="モグモグ">mapErrors()</code> to display them</p>
-    
-    <script> 
-      async function init() {
-        let res = await (await fetch('manifests/manifest-archive.json')).json();
-        installManifest(res);
-      }
-    </script>
 
-    <!-- Core Functionality/Libraries -->
-    <script src="js/json-beautifier.js"></script>
-    <script src="js/sri-error-handling.js"></script>
-    <script src="js/error-handler.js"></script>
-    <script src="js/installer-core.js"></script>
-    <script src="js/SHAHashingAlgorithm.js"></script>
-    <script src="js/JWS.js"></script>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<link rel="stylesheet" href="css/main.css">
+	<script src="https://www.googleoptimize.com/optimize.js?id=OPT-PF9T3F3"></script>
+	<script language="JavaScript" type="text/javascript" src="js/jsrsasign-latest-all-min.js"></script>
+</head>
 
-    <!-- Scripts -->
-    <script src="js/manifest-manager.js"></script>
-    <script src="js/installer.js"></script>
+<body>
+	<h1 class="モグモグ">Installer.html</h1>
+	<hr />
+	<p>Assign the var <code class="モグモグ">generatedManifest</code> by calling the <code
+			class="モグモグ">generate_jws_manifest()</code> function</p>
+	<code class="モグモグ">generatedManifest = generateJWS_manifest();</code>
+	<p>Call the function <code class="モグモグ">installManifest(await generatedManifest)</code> in the console to install
+	</p><br><br>
+	<h1 class="モグモグ">Installer Failled Output</h1>
+	<hr />
+	<p>Any resource that has failed to fetch will be outputted here.. use <code class="モグモグ">mapErrors()</code> to
+		display them</p>
 
-  </body>
+	<script>
+		async function init() {
+			let res = await (await fetch('manifests/manifest-archive.json')).json();
+			installManifest(res);
+		}
+	</script>
+
+	<!-- Core Functionality/Libraries -->
+	<script src="js/json-beautifier.js"></script>
+	<script src="js/sri-error-handling.js"></script>
+	<script src="js/error-handler.js"></script>
+	<script src="js/installer-core.js"></script>
+	<script src="js/SHAHashingAlgorithm.js"></script>
+	<script src="js/JWS.js"></script>
+
+	<!-- Scripts -->
+	<script src="js/manifest-manager.js"></script>
+	<script src="js/installer.js"></script>
+
+</body>
+
 </html>

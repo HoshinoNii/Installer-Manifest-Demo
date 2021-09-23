@@ -51,7 +51,8 @@ class ErrorHandler {
 					message_ = "Computated Integrity Error: " + init.integrity + " Computated Integrity: " + computatedHash
 				}
 			} else {
-				errType = this.ErrorType.MISSING_INTEGRITY
+				if(message_ === "Failed to fetch") errType = this.ErrorType.FAILED_TO_FETCH
+				else errType = this.ErrorType.MISSING_INTEGRITY
 				severity = this.ErrorSeverity.High
 			}
 			status = "failed"
@@ -66,44 +67,6 @@ class ErrorHandler {
 		}
 	}
 
-	async createResponse(message, url, init, res, err) {
-
-		let errType
-		let message_ = message
-		let severity
-		console.log(init, res)
-		if (!res) { //no network status, possible integrity error
-
-			if (init.integrity) { // SRI Related Error
-				let computatedHash = await Algorithm.startHash(url)
-				if (Algorithm.compareHash(init.integrity, computatedHash)) {
-					errType = this.ErrorType.TYPE_ERROR
-					severity = this.ErrorSeverity.Medium
-				} else {
-					errType = this.ErrorType.INVALID_INTEGRIT
-					severity = this.ErrorSeverity.High
-					message_ = "Computated Integrity Error: " + init.integrity + " Computated Integrity: " + computatedHash
-				}
-			} else { // Missing Integrity Attribute
-
-				if (err?.type === this.ErrorType.FAILED_TO_FETCH) errType = this.ErrorType.FAILED_TO_FETCH
-				else errType = this.ErrorType.MISSING_INTEGRITY
-
-				severity = this.ErrorSeverity.High
-			}
-		} else {
-			if (res.failed) {
-				errType = this.ErrorType.FILE_NOT_FOUND
-			}
-		}
-		return {
-			type: errType,
-			severity: severity,
-			message: message_,
-			url: url,
-			init: init,
-		}
-	}
 
 	async catchBrokenResource(obj) { //we can use this to repair any issues or use it as a console logging
 		this.installerErrors.push(obj)

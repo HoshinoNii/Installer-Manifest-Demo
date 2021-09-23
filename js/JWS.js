@@ -166,7 +166,7 @@ class JWSsignatureLib {
         let json = payload
         if(json.resources) { //if the manifest is a resource manifest and not archive 
             for( let resource of json.resources) { //generate a sha384 hash for Subresource Integrity
-                resource.integrity = await alg.startHash(resource.url)
+                resource.integrity = await this.Algorithm.startHash(resource.url)
             }    
         }
         let integrity = await this.Algorithm.startHashWithText(this.serialize(payload))//hash the payload
@@ -255,7 +255,7 @@ async function getKeys() {
 async function init() { 
 
     let credentials = await getKeys()
-    let res = await fetch('manifests/manifest-archive.json') //fetch the manifest.json
+    let res = await fetch('manifests/raw-manifests/manifest-5.3.1.json') //fetch the manifest.json
     let sPayload = await res.json()
     console.log(sPayload, credentials)
     let manifest = await jwsLib.generateJWS_manifest(sPayload, credentials.privateKey, credentials.certifcate_chain, true)
