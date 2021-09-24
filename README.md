@@ -179,5 +179,38 @@ Function List and their actions
 1. Main function to handle the verification of a generated manifest
 1. Accepts 1 argument, the manifest JSON generated from the class.
 
+**ASYNC - verifySignature(signature, payload, key)**
+-----------
+1. Just a simple function to help execute the verify function on the correct resources.
+2. Takes in 3 Arguments, Signature, Payload and Key.
+
 **[Function Operations are as shown]**
-1. 
+1. Firstly Create a seperate JSON object and store the main payload within without the jws key 
+2. Compare the computated SHA384 hash with the provided integrity from the original json
+3. We do this by using the SHAhash class to hash the payload and then do the comparison.
+4. Afterwards, call verifySiganture functionality to start the signature and certificate verification process for the developer and quality key.
+5. Finally do a check to see if all 3 results are true, if so return true, else return false.
+
+**ASYNC - generateJWS_manifest(payload, privateKeys, cert_chains, htmlOutput = false)**
+-----------
+1. The core functionality of this class.
+2. This function is responsible for generating the Signed Manifest-Resource and Manifest-Archive.
+2. Takes in 4 Arguments, Payload, privatekeys, certificate chain, and htmlOutput for logging.
+
+**[Function Operations are as shown]**
+1. Define the result as a const called json.
+2. Check if there is a resources array, if so use the SHAhash class to hash all the resources to generate its own integrity.
+3. Next, serialize the payload object (Canonicalization).
+4. Afterwards use the SHAhash class to hash the serialized payload
+5. Next Generate the developer and quality signatures using createSignature.
+6. Finally Construct the jws key.
+7. Add it to the json const
+8. return the json object.
+
+**serialize(object)**
+-----------
+1. Helper function that converts a json data into a standard and normal or canonical form.
+
+**verifyCertificateChain(certificates)**
+-----------
+1. Helper function to verify the certificate chain.
