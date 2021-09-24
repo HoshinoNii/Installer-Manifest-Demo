@@ -1,11 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
 
 body {
     font-family: 'Roboto', sans-serif;
 }
 
 .モグモグ {
-    font-family: 'fira code';
+    font-family: 'Fira Code', monospace;
 }
 
 p {
@@ -32,10 +33,10 @@ code {
     padding: 15px;
     border: 1px solid black;
     word-wrap: break-word;
-    font-family: 'fira code';
+    font-family: 'Fira Code', monospace;
 }
 
-pre {font-family: 'fira code' !important; outline: 1px solid #ccc; padding: 5px; font-size: 0.8em; overflow: auto; word-wrap: break-word;}
+pre {font-family: 'Fira Code', monospace !important; outline: 1px solid #ccc; padding: 5px; font-size: 0.8em; overflow: auto; word-wrap: break-word;}
 .string { color: green; }
 .number { color: darkorange; }
 .boolean { color: blue; }

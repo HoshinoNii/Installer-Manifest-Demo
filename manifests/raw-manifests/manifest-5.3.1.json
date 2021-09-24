@@ -1,0 +1,95 @@
+{
+    "version": "5.3.1",
+    "path": "/",
+    "index": "index.html",
+    "resources": [
+        {
+            "url": "show_ugly.html",
+            "type": "html"
+        },
+        {
+            "url": "img/profile.jpg",
+            "type": "image"
+        },
+        {
+            "url": "js/installer-core.js",
+            "type": "javascript"
+        },
+        {
+            "url": "js/installer.js",
+            "type": "javascript"
+        },
+        {
+            "url": "js/jsrsasign-latest-all-min.js",
+            "type": "javascript"
+        },
+        {
+            "url": "js/json-beautifier.js",
+            "type": "javascript"
+        },
+        {
+            "url": "video/mogumogu.mp4",
+            "type": "video"
+        },
+        {
+            "url": "audio/mogumogu.mp3",
+            "type": "audio"
+        },
+        {
+            "url": "js/SHAHashingAlgorithm.js",
+            "type": "javascript"
+        },
+        {
+            "url": "css/main.css",
+            "type": "css"
+        },
+        {
+            "url": "video/モグモグ.mp4",
+            "type": "video"
+        },
+        {
+            "url": "js/abcd.js",
+            "type": "javascript"
+        },
+        {
+            "url": "img/Lamy_雪花ラミィ.jpg",
+            "type": "image"
+        },
+        {
+            "url": "img/82368676_p0.jpg",
+            "type": "image"
+        },
+        {
+            "url": "img/82368676_p1.jpg",
+            "type": "image"
+        },
+        {
+            "url": "img/82368676_p2.jpg",
+            "type": "image"
+        },
+        {
+            "url": "img/82368676_p3.jpg",
+            "type": "image"
+        },
+        {
+            "url": "img/82368676_p4.jpg",
+            "type": "image"
+        },
+        {
+            "url": "img/82368676_p6.jpg",
+            "type": "image"
+        },
+        {
+            "url": "img/82368676_p7.jpg",
+            "type": "image"
+        },
+        {
+            "url": "img/82368676_p8.jpg",
+            "type": "image"
+        },
+        {
+            "url": "img/nanashi2.jpg",
+            "type": "image"
+        }
+    ]
+}

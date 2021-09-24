@@ -17,6 +17,9 @@ async function getManifestManager() {
 // insert specified manifest as the latest entry
 async function updateLatest(url) {
     try {
+
+        let credentials = await getKeys() // <--- Belongs to JWS.js using for tesing purposes for now
+        let JWSlib = new JWSsignatureLib("ES256", true)
         let entry = await (await fetch(url)).json()
         let latest = manifest_manager.latest
         let archive = [latest, ...manifest_manager.archive]
@@ -30,10 +33,16 @@ async function updateLatest(url) {
             latest: manifest_entry,
             archive: archive
         }
-        console.log("UpdateLatest() Result:", res, " Old Manifest: ", manifest_manager)
-        output(syntaxHighlight(JSON.stringify(res, undefined, 4))) 
-        manifest_manager = res // DEMO PURPOSES ONLY!
-        return res
+
+        let signedManifest_manager = await JWSlib.generateJWS_manifest(res, credentials.privateKey, credentials.certifcate_chain, false)
+        
+        manifest_manager = signedManifest_manager // DEMO PURPOSES ONLY!
+        if(await JWSlib.verifyManifest(manifest_manager) ) {
+            output(syntaxHighlight(JSON.stringify(signedManifest_manager, undefined, 4)))
+            return manifest_manager
+        } else {
+            throw "Signature Verification Failed!"
+        }// Final Check ) 
         
     } catch (error) {
         console.log(error)
@@ -71,8 +80,11 @@ async function fetchManifest(url) {
 
 // initialization for demo purposes
 async function init() {
+    let JWSlib = new JWSsignatureLib("ES256", true)
     manifest_manager = await getManifestManager()
+    JWSlib.verifyManifest(manifest_manager)
     output(syntaxHighlight(JSON.stringify(manifest_manager, undefined, 4))) 
 }
+
 
 init()

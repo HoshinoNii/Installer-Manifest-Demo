@@ -12,6 +12,7 @@ class JWSsignatureLib {
         this.RemoveCertHeaderRegex = /(-+BEGIN CERTIFICATE-+)(.*?)(-+END CERTIFICATE-+)/s
         this.certhead = '-----BEGIN CERTIFICATE-----'
         this.endcerthead = '-----END CERTIFICATE-----' 
+        this.Algorithm = new SHAHash(this.logging)
     }
 
     
@@ -94,6 +95,31 @@ class JWSsignatureLib {
     }
     
     
+    async verifyManifest(json) {
+
+        // Production side will only have access to the public keys and nothing else
+        try {
+            console.log('input', json)
+            let key = 'jws';
+            let manifestPayload = {...json} //get a copy of the json
+            delete manifestPayload[key] //remove the jws object to get the payload
+            let result = //Verification only returns true when all 3 signatures are verified and is valid 
+                this.Algorithm.compareHash(json.jws.integrity, await this.Algorithm.startHashWithText(this.serialize(manifestPayload))) && 
+                await this.verifySignature(json.jws.quality.signature, json, "quality") &&
+                await this.verifySignature(json.jws.developer.signature, json, "developer") ? true : false
+            if(result) {
+                console.info('[Manifest Verification] Valid Signature Values result:', result, 'Manifest Accepted')
+                return true
+            } else {
+                console.error('[Manifest Verification] Valid Signature Values result:', result, 'Manifest Rejected')
+                return false
+            }
+        } catch (err) {
+            throw err
+        }
+    }
+
+    
     /**
      * Takes a PEM encoded certificate chain array and verifies it
      * @param  {String[]} certificates - PEM certificate chain
@@ -136,13 +162,14 @@ class JWSsignatureLib {
 
     async generateJWS_manifest(payload, privateKeys, cert_chains, htmlOutput = false) {
 
-        let alg = new SHAHash(this.logging)
+        
         let json = payload
-        for( let resource of json.resources) { //generate a sha384 hash for Subresource Integrity
-            resource.integrity = await alg.startHash(resource.url)
+        if(json.resources) { //if the manifest is a resource manifest and not archive 
+            for( let resource of json.resources) { //generate a sha384 hash for Subresource Integrity
+                resource.integrity = await this.Algorithm.startHash(resource.url)
+            }    
         }
-    
-        let integrity = await alg.startHashWithText(this.serialize(payload))//hash the payload
+        let integrity = await this.Algorithm.startHashWithText(this.serialize(payload))//hash the payload
         let date_ = new Date().toISOString().slice(0, 10)
         let payload_ = { integrity: integrity, date: date_ }
         let devSignature = await this.createSignature(privateKeys, cert_chains, payload_)
@@ -203,7 +230,7 @@ class JWSsignatureLib {
 const dir = 'certificates/'
 const jwsLib = new JWSsignatureLib("ES256", true)
 
-const cert_chain = [
+const cert_chain = [ 
     dir+"ca-chain/host.crt",
     dir+"ca-chain/ca.crt"
 ]
@@ -228,7 +255,7 @@ async function getKeys() {
 async function init() { 
 
     let credentials = await getKeys()
-    let res = await fetch('manifests/manifest-5.3.0.json') //fetch the manifest.json
+    let res = await fetch('manifests/raw-manifests/manifest-5.3.1.json') //fetch the manifest.json
     let sPayload = await res.json()
     console.log(sPayload, credentials)
     let manifest = await jwsLib.generateJWS_manifest(sPayload, credentials.privateKey, credentials.certifcate_chain, true)

@@ -1,136 +1,44 @@
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <link rel="stylesheet" href="css/main.css">
-    <script language="JavaScript" type="text/javascript" src="js/jsrsasign-latest-all-min.js"></script>
-  </head>
-  <body>
-    <h1 class="モグモグ">Installer.html</h1>
-    <hr />
-    <p>Assign the var <code class="モグモグ">generatedManifest</code> by calling the <code class="モグモグ">generate_jws_manifest()</code> function</p>
-    <code class="モグモグ">generatedManifest = generateJWS_manifest();</code>
-    <p>Call the function <code class="モグモグ">installManifest(await generatedManifest)</code> in the console to install</p><br><br>
-    <h1 class="モグモグ">Installer Failled Output</h1>
-    <hr />
-    <p>Any resource that has failed to fetch will be outputted here.. use <code class="モグモグ">mapErrors()</code> to display them</p>
-    <script> 
 
-//const ACCEPT_HTML  = "text/html,charset=UTF-8,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
-//const ACCEPT_IMAGE = "image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8";
-//const ACCEPT_CSS = "text/css,*/*;q=0.1"
-//const ACCEPT_JAVASCRIPT = "text/javascript,*/*;q=0.1"
-//const ACCEPT_DEFAULT = "*/*"
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<link rel="stylesheet" href="css/main.css">
+	<script src="https://www.googleoptimize.com/optimize.js?id=OPT-PF9T3F3"></script>
+	<script language="JavaScript" type="text/javascript" src="js/jsrsasign-latest-all-min.js"></script>
+</head>
 
-//// register onmessage for service worker
-//if (navigator && navigator.serviceWorker) {
-//  //reload if page does not register service worker
-//  navigator.serviceWorker.onmessage = async (event) => {
-//    console.log("Main Thread onmessage ", event.data.type, " clientId ", event.data.clientId, " event ", event);
+<body>
+	<h1 class="モグモグ">Installer.html</h1>
+	<hr />
+	<p>Assign the var <code class="モグモグ">generatedManifest</code> by calling the <code
+			class="モグモグ">generate_jws_manifest()</code> function</p>
+	<code class="モグモグ">generatedManifest = generateJWS_manifest();</code>
+	<p>Call the function <code class="モグモグ">installManifest(await generatedManifest)</code> in the console to install
+	</p><br><br>
+	<h1 class="モグモグ">Installer Failled Output</h1>
+	<hr />
+	<p>Any resource that has failed to fetch will be outputted here.. use <code class="モグモグ">mapErrors()</code> to
+		display them</p>
 
-//    if (event.data.type === "serviceworker_onunregistered") {
-//      window.location.reload();
-//    }
-//  }
-//}
+	<script>
+		async function init() {
+			let res = await (await fetch('manifests/manifest-archive.json')).json();
+			installManifest(res);
+		}
+	</script>
 
-//const version = "V5.0";
-//const cacheVersionRegExp  = /\/(?<version>ver_[^\/]+)\//i;
-//const directoryNameRegExp = /\/(?<directory>.*)\//i;
+	<!-- Core Functionality/Libraries -->
+	<script src="js/json-beautifier.js"></script>
+	<script src="js/sri-error-handling.js"></script>
+	<script src="js/error-handler.js"></script>
+	<script src="js/installer-core.js"></script>
+	<script src="js/SHAHashingAlgorithm.js"></script>
+	<script src="js/JWS.js"></script>
 
-//function getCacheNameFromURL(url) {
-//  if (url) {
-//    var cacheName = null;
-//    let versionFound = url.match(cacheVersionRegExp);
+	<!-- Scripts -->
+	<script src="js/manifest-manager.js"></script>
+	<script src="js/installer.js"></script>
 
-//    if (versionFound) {
-//      cacheName = versionFound.groups.version;
-//      console.log(version, "Service Worker Thread getCacheNameFromURL version found : ", versionFound);
-//      console.log(version, "Service Worker Thread getCacheNameFromURL version found cache name : ", cacheName);
-//      return cacheName;
-//    } else {
-//      const resourceURL = new URL(url);
-//      const pathName = resourceURL.pathname;
-//      const directoryName = pathName.match(directoryNameRegExp);
+</body>
 
-//      if (directoryName) {
-//        cacheName = directoryName.groups.directory.replaceAll('/', '_');
-//        console.log(version, "Service Worker Thread getCacheNameFromURL url path : ", pathName, " cache name : ", cacheName);
-//        return cacheName;
-//      } else {
-//        cacheName = "RzAppEngine";
-//        console.log(version, "Service Worker Thread getCacheNameFromURL url path : ", pathName, " cache name : ", cacheName);
-//        return cacheName;
-//      }
-//    }
-//  }
-
-//  return "RzAppEngine";
-//}
-
-//      async function fetchResoure(url, init) {
-//        try {
-//          console.log('URL: ', decodeURI(url))
-//          var thisRequest = new Request(url,init);
-//          thisRequest.url = decodeURI(url);
-//          const networkResponse = await fetch(thisRequest);
-//          if (networkResponse.ok) {
-//            var cacheName = getCacheNameFromURL(thisRequest.url);
-
-//            let cache = await caches.open(cacheName);
-//            await cache.put(thisRequest, networkResponse.clone());
-
-//            return networkResponse;
-//          } else {
-//            throw new Error('response status ' + networkResponse.status + " error " + networkResponse.statusText);
-//          }
-//        } catch (error) {
-//          console.log("fetchResoure rejected :", error);
-//          throw error;
-//        }
-//      }
-
-//      // #region moved over to SHAHashingAlogirthm.js
-//      var urls = [
-//                   {url: "show_ugly.html",          init: {method: 'GET', cache: "no-store", mode: "same-origin", headers: {'Accept': ACCEPT_HTML, "X-Custom-Header": 'bypass-cache'}, integrity: 'sha384-MQQUmF2BGT2RtYoK9JtToOF9OhVMmaimRf6dm38iIZkd1oAbZTrw59oLp0ICdJMG'}},
-//                   {url: "profile.jpg",             init: {method: 'GET', cache: "no-store", mode: "same-origin", headers: {'Accept': ACCEPT_IMAGE,"X-Custom-Header": 'bypass-cache'}, integrity: 'sha384-H5IUwW9WX4khl1l53fMukWw4OKN428pFSYW+jjyCYdLFNk3N7wQEx2UQ95MmtLNK'}},
-//                   {url: "navigation_error.html",   init: {method: 'GET', cache: "no-store", mode: "same-origin", headers: {'Accept': ACCEPT_HTML, "X-Custom-Header": 'bypass-cache'}, integrity: 'sha384-iib1BYKutSbiqvbyMRk9xs4W2jhq1LfpWIdTn5o652ZL5dvEJc9yFZeTjyiCpOT7'}},
-//                   {url: "mogumogu.mp4",            init: {method: 'GET', cache: "no-store", mode: "same-origin", headers: {'Accept': ACCEPT_HTML, "X-Custom-Header": 'bypass-cache'}, integrity: 'sha384-0nJZLfyh0QFDux9Dkd7wqBpi8qaqmx3Kczjge8FpLsPxpvpnXVRCR4Eg8j14l86+'}},
-//                   {url: "mogumogu.mp3",            init: {method: 'GET', cache: "no-store", mode: "same-origin", headers: {'Accept': ACCEPT_HTML, "X-Custom-Header": 'bypass-cache'}, integrity: 'sha384-IH6vW6u39h8T3W60Z9XVR1v2lAVRg+7JUazjAfYrkHNzHG1tkr+F8izIufr/d8ct'}},
-//                   {url: "SHAHashingAlgorithm.js",  init: {method: 'GET', cache: "no-store", mode: "same-origin", headers: {'Accept': ACCEPT_JAVASCRIPT, "X-Custom-Header": 'bypass-cache'}, integrity: 'sha384-MQy3tGwJMPnqw2RkWUES6I3St/tDufNSovh/bKYIqT5nCUqDr0h5qfsvhVcRuMzB'}},
-//                   {url: "main.css",                init: {method: 'GET', cache: "no-store", mode: "same-origin", headers: {'Accept': ACCEPT_CSS, "X-Custom-Header": 'bypass-cache'}, integrity: 'sha384-6DH3PYX9f5P+M0Dxq6TyRrJTcK+65H3cE9jRbnWGd4EcuK4cpCcMZigYtO6Cplm5'}},
-//                   {url: "モグモグ.mp4",              init: {method: 'GET', cache: "no-store", mode: "same-origin", headers: {'Accept': ACCEPT_HTML, "X-Custom-Header": 'bypass-cache', }}},
-//                   {url: "abcd.js",                 init: {method: 'GET', cache: "no-store", mode: "same-origin", headers: {'Accept': ACCEPT_JAVASCRIPT, "X-Custom-Header": 'bypass-cache'},}},
-//                 ];
-//      //async function install23() {
-//      //  let manifest = urls
-//      //  manifest.forEach((value, index, array) => {
-//      //    console.log("installer value ", value, " index ", index, " array ", array);
-
-//      //    fetchResoure(value.url, value.init).then((response) => {
-//      //        console.log("installer response :", response);
-//      //      }, (error) => {
-//      //        console.log("installer response :", error);
-//      //      })
-//      //  })
-//      //}
-
-//      //window.install = install23;
-//      //window.install23();
-//      //// #endregion
-          
-    </script>
-
-    <!-- Core Functionality/Libraries -->
-    <script src="js/json-beautifier.js"></script>
-    <script src="js/sri-error-handling.js"></script>
-    <script src="js/error-handler.js"></script>
-    <script src="js/installer-core.js"></script>
-    <script src="js/SHAHashingAlgorithm.js"></script>
-    <script src="js/JWS.js"></script>
-
-    <!-- Scripts -->
-    <script src="js/manifest-manager.js"></script>
-    <script src="js/installer.js"></script>
-
-  </body>
 </html>
