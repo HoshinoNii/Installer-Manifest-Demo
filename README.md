@@ -214,3 +214,66 @@ Function List and their actions
 **verifyCertificateChain(certificates)**
 -----------
 1. Helper function to verify the certificate chain.
+
+
+[SHAHashingAlgorithm.js]
+=======
+[Prerequisites]
+-----------
+1. A decent understanding of how SHA hashing algorithms work
+
+[Classes]
+-----------
+**SHAhash**
+1. The main hashing helper class used by this installer Demo
+
+**[SHAhash Functions]**
+-----------
+**ASYNC - startHash(url, algorithm)**
+-----------
+1. The main hashing function used to hash resources such as images, html files etc..
+2. Accepts in 2 Arguments, URL and Algorithm Type (Default: SHA384)
+
+**[Function Operations are as shown]**
+1. Create a new request with the URL and set the response as an arrayBuffer.
+2. send a fetch Request with the request
+3. Take the returned arrayBuffer and execute the function generateBase64String.
+4. Once generateBase64String has returned the hash string, return this as the output.
+
+**ASYNC - startHashWithText(stringArr, algorithm)**
+-----------
+1. The main hashing function used to hash text and string resources.
+2. Accepts in 2 Arguments, stringArr and Algorithm Type (Default: SHA384)
+
+**[Function Operations are as shown]**
+1. Create a new TextEncoder() Instance.
+2. encode the stringArr
+3. Execute the generateBase64String function and return the result.
+
+**compareHash(hash1, hash2)**
+-----------
+1. The main function to compareand verify the hash is valid.
+2. Takes in 2 arguments, which are the hashes to be compared.
+
+**[Function Operations are as shown]**
+1. Takes in both hashes and check if they are the same.
+
+
+**ASYNC - generateBase64String(buffer, algorithm)**
+-----------
+1. the main hashing process.
+2. Takes in 2 arguments, the arrayBuffer and the algorithm.
+
+**[Function Operations are as shown]**
+1. Start by executing the hash() function using the given buffer.
+2. Afterwards take the output and convert it into a base64 string
+3. Finally Add in the algorithm type and the string together so it would look like "sha384-..."
+
+
+**ASYNC - hash(file, algorithm)**
+-----------
+1. Helper function that hashes an arrayBuffer with the given algorithm.
+2. Accepts in 2 arugments, the arrayBuffer and the algorithm 
+
+**[Function Operations are as shown]**
+1. Executes crypto.subtle.digest with the given arguments and return the arrayBuffer result.
