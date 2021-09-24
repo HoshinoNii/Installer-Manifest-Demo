@@ -158,7 +158,7 @@ Function List and their actions
 1. Next Verify the certificate chain checking if it is valid
 1. And After verify the reconstructed JWS Signature using jsrsasign
 1. Finally Compare Both booleans from the certificate chain and jsrsasign verify
-1. If both are true, signature is verified and is valid, else reject
+1. If both are true, a signature is verified and is valid, else reject
 
 **ASYNC - verifyManifest(JSON)**
 -----------
@@ -172,7 +172,7 @@ Function List and their actions
 
 **[Function Operations are as shown]**
 1. Firstly Create a seperate JSON object and store the main payload within without the jws key 
-2. Compare the computated SHA384 hash with the provided integrity from the original json
+2. Compare the computated SHA384 hash with the provided integrity from the original JSON
 3. We do this by using the SHAhash class to hash the payload and then do the comparison.
 4. Afterwards, call verifySiganture functionality to start the signature and certificate verification process for the developer and quality key.
 5. Finally do a check to see if all 3 results are true, if so return true, else return false.
@@ -190,8 +190,8 @@ Function List and their actions
 4. Afterwards use the SHAhash class to hash the serialized payload
 5. Next Generate the developer and quality signatures using createSignature.
 6. Finally Construct the jws key.
-7. Add it to the json const
-8. return the json object.
+7. Add it to the JSON const
+8. return the JSON object.
 
 **serialize(object)**
 -----------
@@ -217,7 +217,7 @@ Function List and their actions
 -----------
 **ASYNC - startHash(url, algorithm)**
 -----------
-1. The main hashing function used to hash resources such as images, html files etc..
+1. The main hashing function used to hash resources such as images, HTML files etc..
 2. Accepts in 2 Arguments, URL and Algorithm Type (Default: SHA384)
 
 **[Function Operations are as shown]**
@@ -228,7 +228,7 @@ Function List and their actions
 
 **ASYNC - startHashWithText(stringArr, algorithm)**
 -----------
-1. The main hashing function used to hash text and string resources.
+1. The main hashing function is used to hash text and string resources.
 2. Accepts in 2 Arguments, stringArr and Algorithm Type (Default: SHA384)
 
 **[Function Operations are as shown]**
@@ -238,7 +238,7 @@ Function List and their actions
 
 **compareHash(hash1, hash2)**
 -----------
-1. The main function to compareand verify the hash is valid.
+1. The main function to compare and verify if the hash is valid.
 2. Takes in 2 arguments, which are the hashes to be compared.
 
 **[Function Operations are as shown]**
@@ -259,7 +259,7 @@ Function List and their actions
 **ASYNC - hash(file, algorithm)**
 -----------
 1. Helper function that hashes an arrayBuffer with the given algorithm.
-2. Accepts in 2 arugments, the arrayBuffer and the algorithm 
+2. Accepts in 2 arguments, the arrayBuffer and the algorithm 
 
 **[Function Operations are as shown]**
 1. Executes crypto.subtle.digest with the given arguments and return the arrayBuffer result.
@@ -279,19 +279,19 @@ Function List and their actions
 
 **ASYNC - generateManifest(manifest)**
 -----------
-1. Takes in the signed manifest and outputs an json data that the installer can use
+1. Takes in the signed manifest and outputs an JSON data that the installer can use
 2. Accepts in 1 argument, the signed manifest.
 
 **[Function Operations are as shown]**
 1. Verify the manifest using the verifyManifest() function if it is invalid, throw an error and stop the function there.
 2. Create an array to store the data
-3. Parse through the manifest's resources and generate their own indivudal init data based on their data type and store them into the array.
+3. Parse through the manifest's resources and generate their own individual init data based on their data type and store them into the array.
 4. return the array result once it has been done.
 
 **ASYNC - verifyManifest(json)**
 -----------
 1. Takes in the signed manifest and verify its JWS signature.
-2. Takes in 1 argument, the manifest json itself.
+2. Takes in 1 argument, the manifest JSON itself.
 
 **[Function Operations are as shown]**
 1. Start by verifying its integrity from the jws key
@@ -301,7 +301,7 @@ Function List and their actions
 **ASYNC - install(manifest)**
 -----------
 1. Reads the manifest and starts the installation process.
-2. Takes in 1 argument, the manifest json itself.
+2. Takes in 1 argument, the manifest JSON itself.
 
 **[Function Operations are as shown]**
 1. Generate the manifest using generateManifest() function
