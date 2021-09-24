@@ -1,4 +1,4 @@
-Haoting's Proposed Manifest Setup
+Proposed Manifest Setup
 
 The Manifest will now consist of 2 parts
 1. Manifest-Archive
@@ -113,3 +113,61 @@ Putting the new manifest into the archive
 3. Load manifest-manager.html, open the console (F12) and execute updateLatest(manifestPath) to set the new manifest as the latest
 4. Afterwards Generate a Signed Manifest Again using the steps above for it to be used in the installer.
 
+
+Function List and their actions
+
+[JWS.js]
+[Prerequisites]
+> Jsrsasign Library linked
+> SHAhash Class linked
+> A good understanding of JSON web tokens ref: https://datatracker.ietf.org/doc/html/rfc7515
+
+[Classes]
+JWSsignatureLib
+> Main class that is used for signing and verifying Signed Manifests
+> Constructor accepts in 2 Arguments, Algorithm and Logging 
+> > Algorithm it is recommended to use "ES256"
+> > Set Logging to false if you are not debugging
+
+[JWSsignatureLib Functions]
+=================================================================================
+> ASYNC - createSignature (privateKey, certificates, payload)
+> > Main function for generating new signatures
+> > Accepts in 3 Arguments, PrivateKey, Certificate Chain & Payload 
+> > Output -> header.payload.signature encoded in base64url format.
+
+> > [Function Operations are as shown]
+> > > Define the header taking in the algorithm from the class 
+> > > Payload structure should be: { integrity: "sha384-...", date: "..." }
+> > > Loop through the Certificate Chain and create an array object to send to the header 
+> > > Use Jsrsasign's sign function to sign the header, payload and privatekey 
+> > > split the header.payload.signature and return header..signature instead.
+==================================================================================
+> ASYNC - verify (integrity, payload, date)
+> > Use this to verify any signatures created by createSignature
+> > Accepts 3 arguments
+> > > integirty <--- Signature generated from ASYNC createSignature()
+> > > payload <--- Payload of the JWS 
+> > > date <--- Date of the jws object signed
+
+> > [Function Operations are as shown]
+> > > First Rebuild the original signature structure of Header.payload.signature.
+> > > > This is done by retrieving the integrity and revelant date from the payload
+> > > > And then subsequently reconstructed giving { integrity: "sha384-...", date: "..." }
+> > > > Before it is encoded into base64url.
+
+> > > Next Retrive the client certificate from the certificate chain 
+> > > > THIS MUST BE THE FIRST OBJECT OF THE CHAIN 
+
+> > > Afterwards Obtain the Public key from the certifcate using jsrsasign 
+> > > Next Verify the certificate chain checking if it is valid
+> > > And After verify the reconstructed JWS Signature using jsrsasign
+> > > Finally Compare Both booleans form the certificate chain and jsrsasign verify
+> > > If both are true, signature is verified and is valid, else reject
+==================================================================================
+> ASYNC - verifyManifest(json)
+> > Main function to handle the verification of a generated manifest
+> > Accepts 1 argument, the manifest json generated from the class.
+
+> > [Function Operations are as shown]
+> > > 
