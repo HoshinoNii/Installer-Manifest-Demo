@@ -30,11 +30,6 @@ Objects with integrity every time it is updated.
             "url": "manifests/manifest-5.3.0.json",
             "dir": "/"
         },
-		{
-            "version": "5.2.9",
-            "url": "manifests/manifest-5.2.9.json",
-            "dir": "/"
-        },
 	],
 	"jws": { <---- Generated with the jsrsasign library 
 		"integrity": "sha384-...", 
@@ -64,16 +59,6 @@ the resources that need to be fetched and retrieved by the installer and nothing
             "type": "image",
             "integrity": "sha384-hyEb8dOtgWzOfqKowbmEEUm/Aa5lEF1TodB/aZHJbrDtCJNNUUtyGjIF6QeIIvZ1"
         },
-        {
-            "url": "img/kanata.jpg",
-            "type": "image",
-            "integrity": "sha384-HT3/jIg55VEqNRfho4vxBFMI35L7xr2vC3QJG6NRq5fgPPsRA5NGLvr/B5QlB+lM"
-        },
-        {
-            "url": "img/illust_84719630_20201020_033955.jpg",
-            "type": "image",
-            "integrity": "sha384-hz8VzQgFH+jkDcMi0YB9yM7G9FiEzoDPjZSsq3lGigKvjZAFMrjjgjcFOzrDfrne"
-        }
     ],
     "jws": {
         "integrity": "sha384-BlyUBGiU5Cl6+BoV+fPP8BUpyQp3xOE6T0dvcQRyts6xJaIln3JJmneyKmD8MjS0",
@@ -128,6 +113,7 @@ Function List and their actions
 1. Jsrsasign Library linked
 2. SHAhash Class linked
 3. A good understanding of JSON web tokens ref: https://datatracker.ietf.org/doc/html/rfc7515
+4. json-beautifier.js
 
 [Classes]
 -----------
@@ -172,12 +158,154 @@ Function List and their actions
 1. Next Verify the certificate chain checking if it is valid
 1. And After verify the reconstructed JWS Signature using jsrsasign
 1. Finally Compare Both booleans from the certificate chain and jsrsasign verify
-1. If both are true, signature is verified and is valid, else reject
+1. If both are true, a signature is verified and is valid, else reject
 
 **ASYNC - verifyManifest(JSON)**
 -----------
 1. Main function to handle the verification of a generated manifest
 1. Accepts 1 argument, the manifest JSON generated from the class.
 
+**ASYNC - verifySignature(signature, payload, key)**
+-----------
+1. Just a simple function to help execute the verify function on the correct resources.
+2. Takes in 3 Arguments, Signature, Payload and Key.
+
 **[Function Operations are as shown]**
-1. 
+1. Firstly Create a seperate JSON object and store the main payload within without the jws key 
+2. Compare the computated SHA384 hash with the provided integrity from the original JSON
+3. We do this by using the SHAhash class to hash the payload and then do the comparison.
+4. Afterwards, call verifySiganture functionality to start the signature and certificate verification process for the developer and quality key.
+5. Finally do a check to see if all 3 results are true, if so return true, else return false.
+
+**ASYNC - generateJWS_manifest(payload, privateKeys, cert_chains, htmlOutput = false)**
+-----------
+1. The core functionality of this class.
+2. This function is responsible for generating the Signed Manifest-Resource and Manifest-Archive.
+2. Takes in 4 Arguments, Payload, privatekeys, certificate chain, and htmlOutput for logging.
+
+**[Function Operations are as shown]**
+1. Define the result as a const called json.
+2. Check if there is a resources array, if so use the SHAhash class to hash all the resources to generate its own integrity.
+3. Next, serialize the payload object (Canonicalization).
+4. Afterwards use the SHAhash class to hash the serialized payload
+5. Next Generate the developer and quality signatures using createSignature.
+6. Finally Construct the jws key.
+7. Add it to the JSON const
+8. return the JSON object.
+
+**serialize(object)**
+-----------
+1. Helper function that converts a json data into a standard and normal or canonical form.
+
+**verifyCertificateChain(certificates)**
+-----------
+1. Helper function to verify the certificate chain.
+
+
+[SHAHashingAlgorithm.js]
+=======
+[Prerequisites]
+-----------
+1. A decent understanding of how SHA hashing algorithms work
+
+[Classes]
+-----------
+**SHAhash**
+1. The main hashing helper class used by this installer Demo
+
+**[SHAhash Functions]**
+-----------
+**ASYNC - startHash(url, algorithm)**
+-----------
+1. The main hashing function used to hash resources such as images, HTML files etc..
+2. Accepts in 2 Arguments, URL and Algorithm Type (Default: SHA384)
+
+**[Function Operations are as shown]**
+1. Create a new request with the URL and set the response as an arrayBuffer.
+2. send a fetch Request with the request
+3. Take the returned arrayBuffer and execute the function generateBase64String.
+4. Once generateBase64String has returned the hash string, return this as the output.
+
+**ASYNC - startHashWithText(stringArr, algorithm)**
+-----------
+1. The main hashing function is used to hash text and string resources.
+2. Accepts in 2 Arguments, stringArr and Algorithm Type (Default: SHA384)
+
+**[Function Operations are as shown]**
+1. Create a new TextEncoder() Instance.
+2. encode the stringArr
+3. Execute the generateBase64String function and return the result.
+
+**compareHash(hash1, hash2)**
+-----------
+1. The main function to compare and verify if the hash is valid.
+2. Takes in 2 arguments, which are the hashes to be compared.
+
+**[Function Operations are as shown]**
+1. Takes in both hashes and check if they are the same.
+
+
+**ASYNC - generateBase64String(buffer, algorithm)**
+-----------
+1. the main hashing process.
+2. Takes in 2 arguments, the arrayBuffer and the algorithm.
+
+**[Function Operations are as shown]**
+1. Start by executing the hash() function using the given buffer.
+2. Afterwards take the output and convert it into a base64 string
+3. Finally Add in the algorithm type and the string together so it would look like "sha384-..."
+
+
+**ASYNC - hash(file, algorithm)**
+-----------
+1. Helper function that hashes an arrayBuffer with the given algorithm.
+2. Accepts in 2 arguments, the arrayBuffer and the algorithm 
+
+**[Function Operations are as shown]**
+1. Executes crypto.subtle.digest with the given arguments and return the arrayBuffer result.
+
+[installer.js]
+=======
+[Prerequisites]
+-----------
+1. json-beautifier.js
+2. Jsrsasign
+3. JWS.js
+4. SHAHashingAlgorithm.js 
+5. error-handler.js 
+
+[Functions]
+-----------
+
+**ASYNC - generateManifest(manifest)**
+-----------
+1. Takes in the signed manifest and outputs an JSON data that the installer can use
+2. Accepts in 1 argument, the signed manifest.
+
+**[Function Operations are as shown]**
+1. Verify the manifest using the verifyManifest() function if it is invalid, throw an error and stop the function there.
+2. Create an array to store the data
+3. Parse through the manifest's resources and generate their own individual init data based on their data type and store them into the array.
+4. return the array result once it has been done.
+
+**ASYNC - verifyManifest(json)**
+-----------
+1. Takes in the signed manifest and verify its JWS signature.
+2. Takes in 1 argument, the manifest JSON itself.
+
+**[Function Operations are as shown]**
+1. Start by verifying its integrity from the jws key
+2. Next using the JWSsignatureLib, verify the developer and quality keys
+3. if all 3 outputs are true, return true else false.
+
+**ASYNC - install(manifest)**
+-----------
+1. Reads the manifest and starts the installation process.
+2. Takes in 1 argument, the manifest JSON itself.
+
+**[Function Operations are as shown]**
+1. Generate the manifest using generateManifest() function
+2. if the result is undefined throw and error.
+3. call the error_handler class's error_handler_init() with the generated Manifest's array length 
+4. Loop through all the resources and call fetchResource() from installer-core.js.
+5. Update the error_handler when the result is a PASS or FAIL.
