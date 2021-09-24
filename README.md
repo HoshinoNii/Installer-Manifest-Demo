@@ -30,11 +30,6 @@ Objects with integrity every time it is updated.
             "url": "manifests/manifest-5.3.0.json",
             "dir": "/"
         },
-		{
-            "version": "5.2.9",
-            "url": "manifests/manifest-5.2.9.json",
-            "dir": "/"
-        },
 	],
 	"jws": { <---- Generated with the jsrsasign library 
 		"integrity": "sha384-...", 
@@ -64,16 +59,6 @@ the resources that need to be fetched and retrieved by the installer and nothing
             "type": "image",
             "integrity": "sha384-hyEb8dOtgWzOfqKowbmEEUm/Aa5lEF1TodB/aZHJbrDtCJNNUUtyGjIF6QeIIvZ1"
         },
-        {
-            "url": "img/kanata.jpg",
-            "type": "image",
-            "integrity": "sha384-HT3/jIg55VEqNRfho4vxBFMI35L7xr2vC3QJG6NRq5fgPPsRA5NGLvr/B5QlB+lM"
-        },
-        {
-            "url": "img/illust_84719630_20201020_033955.jpg",
-            "type": "image",
-            "integrity": "sha384-hz8VzQgFH+jkDcMi0YB9yM7G9FiEzoDPjZSsq3lGigKvjZAFMrjjgjcFOzrDfrne"
-        }
     ],
     "jws": {
         "integrity": "sha384-BlyUBGiU5Cl6+BoV+fPP8BUpyQp3xOE6T0dvcQRyts6xJaIln3JJmneyKmD8MjS0",
@@ -128,6 +113,7 @@ Function List and their actions
 1. Jsrsasign Library linked
 2. SHAhash Class linked
 3. A good understanding of JSON web tokens ref: https://datatracker.ietf.org/doc/html/rfc7515
+4. json-beautifier.js
 
 [Classes]
 -----------
@@ -277,3 +263,49 @@ Function List and their actions
 
 **[Function Operations are as shown]**
 1. Executes crypto.subtle.digest with the given arguments and return the arrayBuffer result.
+
+[installer.js]
+=======
+[Prerequisites]
+-----------
+1. json-beautifier.js
+2. Jsrsasign
+3. JWS.js
+4. SHAHashingAlgorithm.js 
+5. error-handler.js 
+
+[Functions]
+-----------
+
+**ASYNC - generateManifest(manifest)**
+-----------
+1. Takes in the signed manifest and outputs an json data that the installer can use
+2. Accepts in 1 argument, the signed manifest.
+
+**[Function Operations are as shown]**
+1. Verify the manifest using the verifyManifest() function if it is invalid, throw an error and stop the function there.
+2. Create an array to store the data
+3. Parse through the manifest's resources and generate their own indivudal init data based on their data type and store them into the array.
+4. return the array result once it has been done.
+
+**ASYNC - verifyManifest(json)**
+-----------
+1. Takes in the signed manifest and verify its JWS signature.
+2. Takes in 1 argument, the manifest json itself.
+
+**[Function Operations are as shown]**
+1. Start by verifying its integrity from the jws key
+2. Next using the JWSsignatureLib, verify the developer and quality keys
+3. if all 3 outputs are true, return true else false.
+
+**ASYNC - install(manifest)**
+-----------
+1. Reads the manifest and starts the installation process.
+2. Takes in 1 argument, the manifest json itself.
+
+**[Function Operations are as shown]**
+1. Generate the manifest using generateManifest() function
+2. if the result is undefined throw and error.
+3. call the error_handler class's error_handler_init() with the generated Manifest's array length 
+4. Loop through all the resources and call fetchResource() from installer-core.js.
+5. Update the error_handler when the result is a PASS or FAIL.
