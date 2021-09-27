@@ -165,7 +165,10 @@ async function generateManifest(manifest) {
                     }
                     break;
                 default:
-                    throw "No Type Defined!" + type
+                    headers = {
+                        'Accept': ACCEPT_DEFAULT,
+                        "X-Custom-Header": 'bypass-cache',
+                    }
                     break;
             }
             init.integrity = integrity
