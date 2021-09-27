@@ -309,3 +309,72 @@ Function List and their actions
 3. call the error_handler class's error_handler_init() with the generated Manifest's array length 
 4. Loop through all the resources and call fetchResource() from installer-core.js.
 5. Update the error_handler when the result is a PASS or FAIL.
+
+[manifest-manager.js]
+=======
+[Prerequisites]
+-----------
+1. json-beautifier.js
+2. Jsrsasign
+3. JWS.js
+4. SHAHashingAlgorithm.js 
+5. error-handler.js 
+
+[Functions]
+-----------
+
+**ASYNC - updateLatest(url)**
+-----------
+1. Takes in a JSON string of a Manifest-Resource Entry and Updates it as the latest and Signs it
+2. Accepts in 1 argument, the JSON entry 
+``` 
+    // EXAMPLE ENTRY
+    {
+        "version": "5.3.1",
+        "url": "manifests/manifest-5.3.1.json",
+        "dir": "/"
+    }
+```
+
+**[Function Operations are as shown]**
+1. Grab the crednetial details from JWS.js using getKeys()
+2. Create a new instance of JWSsignatureLib for Signing
+3. Assign the JSON argument into a variable
+4. Store the latest Entry of the manifest-archive into a variable
+5. Use the Spread Operator to store the latest and the old archive into the new archive list
+6. Create the new entry using the JSON data provided in the argument
+7. Finally Construct the new Manifest Entry and Sign it using the JWSsignatureLib Class.
+
+**ASYNC - getLatestFallback()**
+-----------
+1. Gets the first element of the manifest-Archive's archive key array
+
+**[Function Operations are as shown]**
+1. returns the first item in the archive array of the Manifest-Archive.
+
+**ASYNC - getManifestVersion(versionNo)**
+-----------
+1. Finds the specific entry of a manifest-archive resource based on version number.
+2. Accepts in 1 Argument, the Version Number
+
+**[Function Operations are as shown]**
+1. First Check if the version number in the argument is the latest, if so return that entry. 
+2. Otherwise, do a find operation to search for the entry in the archive array and returns it if it is found.
+
+
+**ASYNC - getLatest()**
+-----------
+1. Gets the latest entry of the manifest.
+
+**[Function Operations are as shown]**
+1. returns latest entry of the manifest.
+
+**ASYNC - init()**
+-----------
+1. Initilization mainly used for demo purposes.
+
+**[Function Operations are as shown]**
+1. Create an instance of JWSsignatureLib.
+2. Retrieve the latest Manifest-Archive from path.
+3. Verify its integrity using JWSsignatureLib.
+4. Print out the JSON as HTML.
