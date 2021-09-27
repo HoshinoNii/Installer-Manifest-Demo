@@ -279,6 +279,9 @@ async function TestInstall() {
                 error_handler.updateInstalled(false)
             })
         })
+
+        let res2 = await(await fetch("manifests/manifest-5.3.0.json")).json()
+        install(res2)
     } catch (err) {
         console.error("[Install()] Rejected", err)
     }
