@@ -15,19 +15,21 @@ async function getManifestManager() {
 }
 
 // insert specified manifest as the latest entry
-async function updateLatest(url) {
+async function updateLatest(json) {
     try {
 
         let credentials = await getKeys() // <--- Belongs to JWS.js using for tesing purposes for now
         let JWSlib = new JWSsignatureLib("ES256", true)
-        let entry = await (await fetch(url)).json()
+        let entry = json
         let latest = manifest_manager.latest
         let archive = [latest, ...manifest_manager.archive]
+        console.log(latest, latest.version, "Entry")
         let manifest_entry = {
             version: entry.version,
             manifest: MANIFEST+"-"+entry.version+".json",
-            dir: entry.path
+            dir: entry.dir
         }
+        console.log(manifest_entry)
         let res = {
             name: manifest_manager.name,
             latest: manifest_entry,
